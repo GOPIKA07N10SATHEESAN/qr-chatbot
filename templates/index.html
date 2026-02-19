@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>QR Campus Chatbot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(-45deg, #d8c3fc, #cfd9ff, #b5ead7, #fbc2eb);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            width: 420px;
+            padding: 35px;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            color: #333;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #444;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            border-radius: 12px;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.7);
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.1);
+            transition: 0.3s;
+        }
+
+        select:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: scale(1.02);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 20px;
+            border-radius: 15px;
+            border: none;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            color: white;
+            background: linear-gradient(to right, #a18cd1, #fbc2eb);
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        button:active {
+            transform: scale(0.95);
+            background: linear-gradient(to right, #89f7fe, #66a6ff);
+        }
+
+        #result {
+            margin-top: 25px;
+            padding: 18px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.6);
+            font-size: 15px;
+            min-height: 40px;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>📱 QR Campus Chatbot</h2>
+
+        <label>Select Language:</label>
+        <select id="language">
+            <option value="en">English</option>
+            <option value="ml">Malayalam</option>
+            <option value="hi">Hindi</option>
+        </select>
+
+        <label>Select Question:</label>
+        <select id="question">
+            {% for q in questions %}
+            <option value="{{ q }}">{{ q }}</option>
+            {% endfor %}
+        </select>
+
+        <button onclick="getAnswer()">Get Answer</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function getAnswer() {
+            let question = document.getElementById("question").value;
+            let language = document.getElementById("language").value;
+
+            fetch("/get_answer", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ question: question, language: language })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("result").innerHTML =
+                        "<b>" + data.question + "</b><br><br>" + data.answer;
+                });
+        }
+    </script>
+
+</body>
+
+</html>
